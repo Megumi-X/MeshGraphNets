@@ -20,7 +20,7 @@ for args in [
          'opt_restart': 0, 
          'weight_decay': 5e-4, 
          'lr': 0.001,
-         'train_size': 45, 
+         'train_size': 90, 
          'test_size': 10, 
          'device':'cuda',
          'shuffle': True, 
@@ -49,4 +49,7 @@ args.device = device
 
 
 test_losses, losses, velo_val_losses, best_model, best_test_loss, test_loader = train(dataset, device, stats_list, args)
+plt.plot(losses)
+plt.plot(test_losses)
+plt.show()
 #save_plots(args, losses, test_losses, velo_val_losses)

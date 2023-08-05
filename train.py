@@ -4,6 +4,7 @@ import os
 import copy
 from tqdm import trange
 import pandas as pd
+from pandas import DataFrame
 from torch_geometric.data import DataLoader
 from utils import *
 from MGN import *
@@ -39,7 +40,7 @@ def train(dataset, device, stats_list, args):
     velocity_val = []
     best_test_loss = np.inf
     best_model = None
-    model.train()
+    df_count = 0
     for epoch in trange(args.epochs, desc="Training", unit="Epochs"):
         model.train()
         loss_all = 0
@@ -75,15 +76,16 @@ def train(dataset, device, stats_list, args):
             if(args.save_velo_val):
                 test_losses.append(test_losses[-1])
                 velocity_val.append(velocity_val[-1])
-        #if (args.save_velo_val):
-            #df = df.append({'epoch': epoch,'train_loss': losses[-1],
-        #                    'test_loss':test_losses[-1],
-        #                   'velo_val_loss': velocity_val[-1]}, ignore_index=True)
-        #else:
-            #df = df.append({'epoch': epoch, 'train_loss': losses[-1], 'test_loss': test_losses[-1]}, ignore_index=True)
+        if (args.save_velo_val):
+            df.loc[df_count] = {'epoch': epoch,'train_loss': losses[-1],
+                            'test_loss':test_losses[-1],
+                           'velo_val_loss': velocity_val[-1]}
+        else:
+            df.loc[df_count] = {'epoch': epoch, 'train_loss': losses[-1], 'test_loss': test_losses[-1]}
+        df_count += 1
         if epoch % 100 == 0:
             if (args.save_velo_val):
-                print("train loss", str(round(loss_all, 2)),
+                print("train loss", str(round(loss, 2)),
                       "test loss", str(round(test_loss, 2)),
                       "velo loss", str(round(velocity_val[-1], 5)))
             else:
